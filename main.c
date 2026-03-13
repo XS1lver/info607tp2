@@ -43,14 +43,14 @@ bool vide(liste_rec* l){
 }
 
 liste_rec* suffixer(liste_rec* l, int val){
-    if (l == NULL) {
+    if (vide(l)){
         return creer_liste(val);
+    } 
+    else if(l->suiv == NULL){
+        l->suiv = creer_liste(val);
     }
-
-    liste_rec* temp = l;
-    while (temp->suiv != NULL) {
-        temp = temp->suiv;
+    else{
+        suffixer(l->suiv, val);
     }
-    temp->suiv = creer_liste(val);
     return l;
 }
