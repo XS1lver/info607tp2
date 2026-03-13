@@ -28,8 +28,8 @@ liste_rec* prefixer(liste_rec* l, int val){
     }
     else{
         liste_rec* l2 = creer_liste(val);
-        l->suiv = l2;
-        return l;
+        l2->suiv = l;
+        return l2;
     }
     
 }
@@ -56,7 +56,9 @@ void affiche_liste(liste_rec* l){
         printf("%d", l->val);
         affiche_liste(l->suiv);
     }
-    printf("\n");
+    else{
+        printf("\n");
+    }
 }
 
 liste_rec* fusion(liste_rec* l1, liste_rec* l2) {
@@ -73,14 +75,42 @@ liste_rec* fusion(liste_rec* l1, liste_rec* l2) {
     }
 }
 
+// Définie une liste croissante de la liste récursive l
+liste_rec* SSC(liste_rec* l){
+    liste_rec* res = creer_liste(l->val);
+    if (!vide(l->suiv) && l->val < (l->suiv)->val){
+        res -> suiv = SSC(l->suiv);
+    }
+    return res;
+}
+
+/*
+liste_rec* comp(liste_rec A, liste_rec B){
+
+}*/
+
 int main(){
     liste_rec* l1 = creer_liste(7);
     liste_rec* l2 = creer_liste(5);
 
     suffixer(l1, 9);
-    prefixer(l2, 3);
+    printf("Suffixer l1: ");
+    affiche_liste(l1);
 
+    l2 = prefixer(l2, 3);
+    printf("\nPrefixer l2: ");
+    affiche_liste(l2);
+
+    printf("\nFusion l1 / l2: ");
     liste_rec* l3 = fusion(l1, l2);
+    affiche_liste(l3);
+
+    printf("\nSuffixer l3: ");
+    suffixer(l3, 1);
 
     affiche_liste(l3);
+
+    printf("\nSSC: ");
+    liste_rec* l4 = SSC(l3);
+    affiche_liste(l4);
 }
