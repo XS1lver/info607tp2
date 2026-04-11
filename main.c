@@ -75,6 +75,37 @@ liste_rec* fusion(liste_rec* l1, liste_rec* l2) {
     }
 }
 
+// Tri fusion dérécursifié
+liste_rec* fusion_derec(liste_rec* l1, liste_rec* l2){
+    if (l1 == NULL) return l2;
+    if (l2 == NULL) return l1;
+
+    liste_rec temp; // Liste temporaire pour stocker le résultat de la fusion
+    liste_rec* courant = &temp; // Pointeur pour parcourir la liste temporaire
+    temp.suiv = NULL; // Initialisation de la liste temporaire
+
+    // Parcours des deux listes tant qu'elles ne sont pas vides
+    while(!vide(l1) && !vide(l2)){
+        if (l1->val <= l2->val){
+            courant->suiv = l1; // Ajout de l'élément de l1 à la liste temporaire
+            l1 = l1->suiv; // Avancement dans la liste l1
+        }
+        else{
+            courant->suiv = l2; // Ajout de l'élément de l2 à la liste temporaire
+            l2 = l2->suiv; // Avancement dans la liste l2
+        }
+        courant = courant->suiv; // Avancement du pointeur courant dans la liste temporaire
+    }
+
+    if (l1 != NULL) { // Si la liste l1 est NULL 
+        courant->suiv = l1; // On raccroche le reste de l1 à la liste temporaire
+    } else {
+        courant->suiv = l2; // Sinon, on raccroche le reste de l2 à la liste temporaire
+    }
+
+    return temp.suiv; // Retourne la tête de la liste fusionnée
+}
+
 // Définie une liste croissante de la liste récursive l
 liste_rec* SSC(liste_rec* l){
     liste_rec* res = creer_liste(l->val);
@@ -82,6 +113,19 @@ liste_rec* SSC(liste_rec* l){
         res -> suiv = SSC(l->suiv);
     }
     return res;
+}
+
+liste_rec* SSC_derec(liste_rec* l){
+    liste_rec* res = creer_liste(l->val); // On crée la nouvelle liste
+    liste_rec* courant = res; // On crée un pointeur courant
+
+    // Tant que la liste l n'est pas vide et que les éléments sont dans l'ordre croissant
+    while (!vide(l->suiv) && l->val < (l->suiv)->val){
+            courant->suiv = creer_liste(l->suiv->val); // On crée l'élément suivant
+            courant = courant->suiv; // On avance le pointeur courant 
+            l = l -> suiv; // On avance dans la liste l
+        }
+    return res; // Retourne la liste croissante
 }
 
 // Définie la sous-suite complément de la suite A dans la suite B
@@ -99,12 +143,44 @@ liste_rec* comp(liste_rec* A, liste_rec* B){
     return NULL;
 }
 
+liste_rec* comp_derec(liste_rec* A, liste_rec* B){
+
+    // Tant que les listes ne sont pas vides et le premier élément de chaque liste sont égaux
+    while (!vide(A->suiv) && !vide(B->suiv) && A->val == B->val){
+        A = A->suiv; // On avance dans A
+        B = B->suiv; // On avance dans B
+    }
+
+    // Si A est NULL alors A correspondait parfaitement au début de B
+    if (vide(A)){
+        return B; // Donc on renvoie la liste complément (B)
+    }
+
+    return NULL; // Si la liste B est finie trop tôt par rapport à A.
+}
+
 // Tri une liste récursive 
-liste_rec* TRI(liste_rec* A){
+liste_rec* tri(liste_rec* A){
     if (vide(A)) return NULL; // Si la liste est vide elle est déjà triée
 
     // Fusionne le premier élément de la liste A avec le reste de la liste trié récursivement par tri fusion
-    return fusion( creer_liste( premier(*A) ), TRI( reste(A) ) ); 
+    return fusion( creer_liste( premier(*A) ), tri( reste(A) ) ); 
+}
+
+liste_rec* tri_derec(liste_rec* A){
+    if (vide(A)) return NULL; // Si la liste est vide elle est déjà triée
+
+    liste_rec* liste_triee = NULL; // On crée la liste contenant le résultat
+
+    liste_rec* courant = A; // On crée un pointeur courant 
+
+    // Tant que la liste n'est pas vide 
+    while (!vide(courant)){
+        liste_rec* nouveau = creer_liste(courant->val); // On crée une nouvelle liste avec l'élément à trier 
+        liste_triee = fusion(nouveau, liste_triee); // On trie l'élément en l'insérant dans la nouvelle liste triée
+        courant = courant->suiv; // On passe à l'élément suivant 
+    }
+    return liste_triee; // Renvoie la liste triée 
 }
 
 int main(){
@@ -132,7 +208,7 @@ int main(){
     liste_rec* l4 = SSC(l3);
     affiche_liste(l4);
 
-    printf("\ncomp: ");
+    printf("\nComp: ");
     liste_rec* lA = creer_liste(4); // Création de la liste A
     suffixer(lA, 7);
     suffixer(lA, 9);    
@@ -145,9 +221,9 @@ int main(){
     affiche_liste(l5);
 
 
-    printf("\nTRI: ");
-    liste_rec* l6 = TRI(l3);
+    printf("\nTri: ");
+    liste_rec* l6 = tri(l3);
     affiche_liste(l6);
 
-    
+
 }
