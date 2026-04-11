@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 typedef struct _liste_rec {
     int val;
@@ -225,5 +226,32 @@ int main(){
     liste_rec* l6 = tri(l3);
     affiche_liste(l6);
 
+    // ----------------------------------------------------------------------------------
+    // Question 1.7
 
+    printf("\nTest de performance des différents tris:\n");
+    int taille = 10000;
+    liste_rec* l = NULL;
+
+    for (int i = 0; i < taille; i++){
+        l = prefixer(l, i);
+    }
+
+    // Test récursif
+    clock_t start_rec = clock();
+    liste_rec* res_rec = tri(l);
+    clock_t end_rec = clock();
+    double time_rec = ((double)(end_rec - start_rec)) / CLOCKS_PER_SEC;
+
+    // Test itératif
+    clock_t start_iter = clock();
+    liste_rec* res_iter = tri_derec(l);
+    clock_t end_iter = clock();
+    double time_iter = ((double)(end_iter - start_iter)) / CLOCKS_PER_SEC;
+
+    printf("Pour %d elements :\n", taille);
+    printf("Version récursif : %f secondes\n", time_rec);
+    printf("Version itératif : %f secondes\n", time_iter);
+
+    return 0;
 }
