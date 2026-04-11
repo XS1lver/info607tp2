@@ -99,6 +99,14 @@ liste_rec* comp(liste_rec* A, liste_rec* B){
     return NULL;
 }
 
+// Tri une liste récursive 
+liste_rec* TRI(liste_rec* A){
+    if (vide(A)) return NULL; // Si la liste est vide elle est déjà triée
+
+    // Fusionne le premier élément de la liste A avec le reste de la liste trié récursivement par tri fusion
+    return fusion( creer_liste( premier(*A) ), TRI( reste(A) ) ); 
+}
+
 int main(){
     liste_rec* l1 = creer_liste(7);
     liste_rec* l2 = creer_liste(5);
@@ -135,4 +143,11 @@ int main(){
     suffixer(lB, 2);
     liste_rec* l5 = comp(lA, lB); // Calcul de la sous-suite complément de A dans B
     affiche_liste(l5);
+
+
+    printf("\nTRI: ");
+    liste_rec* l6 = TRI(l3);
+    affiche_liste(l6);
+
+    
 }
