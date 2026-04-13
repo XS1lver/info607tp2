@@ -46,24 +46,41 @@ int RabinKarp(char* text, char* motif){
     bool trouve = false;
     int hashm = hash(motif);
 
-    char sous_chaine[m + 1]; // Pour contenir une chaine de caractères de la même taille que le motif
+    // Initialisation pour le mode de calcul économique
+    char premiere_fenetre[m + 1]; // Initialisation de la première fenêtre de texte à comparer avec le motif
+    strncpy(premiere_fenetre, text, m); // Copie des m premiers caractères de text dans premiere_fenetre
+    premiere_fenetre[m] = '\0'; // Ajout du caractère de fin de chaîne
+    int hasht = hash(premiere_fenetre); // Valeur de hachage initiale du sous-motif dans le fichier
+
+    // On calcule le poids h pour le caractère de gauche du motif (le plus à gauche) qui sera retiré lors du décalage économique
+    int h = 1;
+    for (int j = 0; j < m - 1; j++) {
+        h = (h * BASE) % MODULO;
+    }
 
     while (!trouve && i <= n - m){
-        strncpy(sous_chaine, &text[i], m); // On copie dans sous_chaine la chaine de taille m à partir de text[i]
-        sous_chaine[m] = '\0'; // Fin de la chaine de caractères
-
-        if (hashm == hash(sous_chaine)){ // Si les hashs du motif et de la chaine de caractère extraite sont identiques 
-            if (strncmp(&text[i], motif, m) == 0) { // On compare les 2 chaines de caractères
+        if (hashm == hasht && strncmp(&text[i], motif, m) == 0){ // Si les hashs sont égaux, on compare les chaînes de caractères
                 trouve = true;
-            }
-            else{
-                i = i + 1;
-            }
         }
-        else{
+        else {
+            // Décalage économique du hash pour le sous-motif suivant (un cran vers la droite)
+            if (i < n - m) {
+                // Calcul du nouveau hash en retirant le caractère de gauche et en ajoutant le caractère de droite
+                hasht = (BASE * (hasht - (text[i] - '0') * h) + (text[i + m] - '0')) % MODULO; 
+                if (hasht < 0) {
+                    hasht += MODULO; // Assurer que le hash reste positif
+                }
+            }
             i = i + 1;
         }
-    }    
+    } 
+
+    if (trouve){
+        return i; // Retourne l'indice où se trouve le motif dans text
+    } 
+    else {
+        return -1; 
+    }
 }
 
 int main(){
