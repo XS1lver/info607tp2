@@ -34,7 +34,7 @@ int hash(char* str) {
     int val = 0;
     int len = strlen(str);
     for (int i = 0; i < len; i++) {
-        val = (val * BASE + (str[i] - '0')) % MODULO;
+        val = (val * BASE + (str[i] - '0')) % MODULO; // str[i] - '0' récupère la valeur du chiffre ('0' ayant le code ASCII 48)
     }
     return val;
 }
