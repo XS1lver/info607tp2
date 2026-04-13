@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define BASE 10
+#define BASE 10 // Base pour le calcul du hash
 #define MODULO 1000003 // Grand nombre premier pour limiter les collisions
 
 int bruteForce(char* text, char* motif){
@@ -13,21 +13,16 @@ int bruteForce(char* text, char* motif){
     int n = strlen(text);
     bool trouve = false;
 
-    while (!trouve && (i <= (n - m))){
+    // Parcours du texte jusqu'à ce que le motif soit trouvé ou que la fin du texte soit atteinte
+    while (i <= (n - m)){
         if (strncmp(&text[i], motif, m) == 0){ // Compare les m premiers caractères sur les chaines text[i] et motif
-            trouve = true;
+            return i; // On renvoie l'indice où se trouve le motif dans text
         }
         else{
             i = i + 1;
         }
     }
-
-    if (trouve){
-        return i; // On renvoie l'indice où se trouve le motif dans text
-    }
-    else{
-        return -1;
-    }
+    return -1; // Si le motif n'est pas trouvé, on retourne -1
 }
 
 int hash(char* str) {
@@ -40,11 +35,11 @@ int hash(char* str) {
 }
 
 int RabinKarp(char* text, char* motif){
-    int i = 0;
+    int i = 0; // Indice de départ pour le parcours du texte
     int m = strlen(motif);
     int n = strlen(text);
     bool trouve = false;
-    int hashm = hash(motif);
+    int hashm = hash(motif); // Calcul du hash du motif à rechercher
 
     // Initialisation pour le mode de calcul économique
     char premiere_fenetre[m + 1]; // Initialisation de la première fenêtre de texte à comparer avec le motif
@@ -52,47 +47,43 @@ int RabinKarp(char* text, char* motif){
     premiere_fenetre[m] = '\0'; // Ajout du caractère de fin de chaîne
     int hasht = hash(premiere_fenetre); // Valeur de hachage initiale du sous-motif dans le fichier
 
-    // On calcule le poids h pour le caractère de gauche du motif (le plus à gauche) qui sera retiré lors du décalage économique
-    int h = 1;
+    // On calcule le poids pour le caractère de gauche du motif (le plus à gauche) qui sera retiré lors du décalage économique
+    int poids = 1;
     for (int j = 0; j < m - 1; j++) {
-        h = (h * BASE) % MODULO;
+        poids = (poids * BASE) % MODULO;
     }
 
-    while (!trouve && i <= n - m){
+    while (i <= n - m){
         if (hashm == hasht && strncmp(&text[i], motif, m) == 0){ // Si les hashs sont égaux, on compare les chaînes de caractères
-                trouve = true;
+            return i; // Retourne l'indice où se trouve le motif dans text
         }
         else {
             // Décalage économique du hash pour le sous-motif suivant (un cran vers la droite)
             if (i < n - m) {
                 // Calcul du nouveau hash en retirant le caractère de gauche et en ajoutant le caractère de droite
-                hasht = (BASE * (hasht - (text[i] - '0') * h) + (text[i + m] - '0')) % MODULO; 
+                hasht = (BASE * (hasht - (text[i] - '0') * poids) + (text[i + m] - '0')) % MODULO; 
                 if (hasht < 0) {
                     hasht += MODULO; // Assurer que le hash reste positif
                 }
             }
-            i = i + 1;
+            i = i + 1; // Avancement dans le texte
         }
     } 
 
-    if (trouve){
-        return i; // Retourne l'indice où se trouve le motif dans text
-    } 
-    else {
-        return -1; 
-    }
+    return -1; // Si le motif n'est pas trouvé, on retourne -1
+
 }
 
 int main(){
-    int n = 10000000;
-    char* text = malloc(n + 1);
+    int n = 100000000; // Taille du texte à générer
+    char* text = malloc(n + 1); 
     char motif[] = "534872941";
     int m = strlen(motif);
 
     // Génération d'un texte aléatoire
     srand(time(NULL));
     for (int i = 0; i < n; i++) {
-        text[i] = (rand() % 10) + '0';
+        text[i] = (rand() % BASE) + '0';
     }
     text[n] = '\0';
 
@@ -104,7 +95,7 @@ int main(){
     clock_t end_brute_force = clock();
     double time_brute_force = ((double)(end_brute_force - start_brute_force)) / CLOCKS_PER_SEC;
     printf("Motif trouvé à l'indice %d\n", result);
-    printf("Temps: %f\n", time_brute_force);
+    printf("Temps: %f\n\n", time_brute_force);
 
 
     printf("Test de performance pour Rabin Karp:\n");
