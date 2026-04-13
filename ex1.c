@@ -5,7 +5,7 @@
 
 typedef struct _liste_rec {
     int val;
-    struct _liste_rec *suiv; // On utilise le nom "struct node" ici
+    struct _liste_rec *suiv; 
 } liste_rec;
 
 liste_rec* creer_liste(int val){
@@ -234,7 +234,7 @@ int main(){
     liste_rec* l = NULL;
 
     for (int i = 0; i < taille; i++){
-        l = prefixer(l, i);
+        l = prefixer(l, i); // On force le pire cas en mettant tout les éléments dans l'ordre décroissant
     }
 
     // Test récursif

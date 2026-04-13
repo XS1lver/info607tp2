@@ -14,7 +14,7 @@ int bruteForce(char* text, char* motif){
     bool trouve = false;
 
     while (!trouve && (i <= (n - m))){
-        if (strncmp(&text[i], motif, m) == 0){
+        if (strncmp(&text[i], motif, m) == 0){ // Compare les m premiers caractères sur les chaines text[i] et motif
             trouve = true;
         }
         else{
@@ -23,7 +23,7 @@ int bruteForce(char* text, char* motif){
     }
 
     if (trouve){
-        return i;
+        return i; // On renvoie l'indice où se trouve le motif dans text
     }
     else{
         return -1;
@@ -46,14 +46,14 @@ int RabinKarp(char* text, char* motif){
     bool trouve = false;
     int hashm = hash(motif);
 
-    char sous_chaine[m + 1];
+    char sous_chaine[m + 1]; // Pour contenir une chaine de caractères de la même taille que le motif
 
     while (!trouve && i <= n - m){
-        strncpy(sous_chaine, &text[i], m);
+        strncpy(sous_chaine, &text[i], m); // On copie dans sous_chaine la chaine de taille m à partir de text[i]
         sous_chaine[m] = '\0';
 
-        if (hashm == hash(sous_chaine)){
-            if (strncmp(&text[i], motif, m) == 0) {
+        if (hashm == hash(sous_chaine)){ // Si les hashs du motif et de la chaine de caractère extraite sont identiques 
+            if (strncmp(&text[i], motif, m) == 0) { // On compare les 2 chaines de caractères
                 trouve = true;
             }
             else{
