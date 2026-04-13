@@ -50,7 +50,7 @@ int RabinKarp(char* text, char* motif){
 
     while (!trouve && i <= n - m){
         strncpy(sous_chaine, &text[i], m); // On copie dans sous_chaine la chaine de taille m à partir de text[i]
-        sous_chaine[m] = '\0';
+        sous_chaine[m] = '\0'; // Fin de la chaine de caractères
 
         if (hashm == hash(sous_chaine)){ // Si les hashs du motif et de la chaine de caractère extraite sont identiques 
             if (strncmp(&text[i], motif, m) == 0) { // On compare les 2 chaines de caractères
