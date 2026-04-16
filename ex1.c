@@ -243,9 +243,14 @@ int main(){
     clock_t end_rec = clock();
     double time_rec = ((double)(end_rec - start_rec)) / CLOCKS_PER_SEC;
 
+    liste_rec* l_iter = NULL;
+    for (int i = 0; i < taille; i++){
+        l_iter = prefixer(l_iter, i); // On force le pire cas en mettant tout les éléments dans l'ordre décroissant
+    }
+
     // Test itératif
     clock_t start_iter = clock();
-    liste_rec* res_iter = tri_derec(l);
+    liste_rec* res_iter = tri_derec(l_iter);
     clock_t end_iter = clock();
     double time_iter = ((double)(end_iter - start_iter)) / CLOCKS_PER_SEC;
 
